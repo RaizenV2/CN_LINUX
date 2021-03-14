@@ -1,5 +1,4 @@
-
-#read up for a.txt matrix 
+# read up for a.txt matrix
 def matrix_read_up_a(input_data):
     f = open(input_data, "r")
     n = int(f.readline())
@@ -32,4 +31,4 @@ def matrix_read_up_a(input_data):
 
 if __name__ == "__main__":
     print("it will run from main program\n   ")
-    matrix_read_up("a.txt")
+    matrix_read_up_a("a.txt")
