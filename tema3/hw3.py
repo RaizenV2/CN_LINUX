@@ -120,23 +120,26 @@ def multiply_matrix(Matrix, a, b, c):
 
     for i in range(0, len(Matrix)):
         row = get_line_matrix(Matrix, i)
-        counter_a = 0
-        counter_b = 0
-        counter_c = 0
+        
+        length_a = len(a)
+        length_b = len(b)
+        length_c = len(c)
         for j in range(0, len(Matrix)):
             # result[i][j] += A[i][k] * B[k][j]
             final_cut = 0
-
-            for k in range(0, len(Matrix)):
+            counter_a = 0
+            counter_b = 0
+            counter_c = 0
+            for k in range(0, len(Matrix)): # aici in loc ce am facut eu poti itera  numai prin coloanele salvate de mine, get line iti da randul , alaturi de valoare iti spune si pe ce linie coloana a gasit , te poti folosi de asta pentru a nu itera prin o groaza de valori degeaba 
                 value = get_value(row, k)  # A[i][k] - in mod normal
-                if k == j:
+                if k == j and counter_a < length_a :
                     value2 = a[counter_a]
                     counter_a += 1
-                elif k+1 == j:
+                elif k+1 == j and counter_b < length_b:
                     # Obtinem B[k][j] in functie de vectorii salvati si relatiile dintre indexii lor
                     value2 = b[counter_b]
                     counter_b += 1              #
-                elif k == k+1:
+                elif k == k+1 and counter_c < length_c:
                     value2 = c[counter_c]
                     counter_c += 1
                 else:
@@ -165,11 +168,13 @@ def check_matrix(a, file_name):
                 if elements[0] != values[0]:
                     if abs(float(elements[0]) - values[0]) > E:
                         print("Error")
+    return True
 
 
 if __name__ == "__main__":
 
     matrice = matrix_read_up_a("a.txt")
+    matrice_inmultire = matrix_read_up_a("aorib.txt")
     # for line in range(40, 50):
     #     print(f"Line is {line}")
     #     line_o = get_line_matrix(matrice, line)
@@ -186,3 +191,5 @@ if __name__ == "__main__":
     print(len(c))
     print(len(matrice))
     multiply_matrix(matrice, a, b, c)
+    check_matrix
+
