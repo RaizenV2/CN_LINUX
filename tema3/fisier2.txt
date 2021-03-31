@@ -1,0 +1,17 @@
+Suma este ok 
+Am gasit doua elemente diferite linia 0 coloana 0 valoarea1 1545.1875 valoare2 1424.375  
+Am gasit doua elemente diferite linia 0 coloana 1109 valoarea1 12.25 valoare2 8.75  
+Am gasit doua elemente diferite linia 1 coloana 0 valoarea1 1545.1875 valoare2 263.375  
+Am gasit doua elemente diferite linia 305 coloana 0 valoarea1 1545.1875 valoare2 241.875  
+Am gasit doua elemente diferite linia 333 coloana 14 valoarea1 29.75 valoare2 95.0  
+Am gasit doua elemente diferite linia 504 coloana 1111 valoarea1 21.0 valoare2 37.125  
+Am gasit doua elemente diferite linia 585 coloana 15 valoarea1 182.75 valoare2 133.875  
+Am gasit doua elemente diferite linia 700 coloana 0 valoarea1 1545.1875 valoare2 263.375  
+Am gasit doua elemente diferite linia 807 coloana 0 valoarea1 1545.1875 valoare2 32.25  
+Am gasit doua elemente diferite linia 911 coloana 0 valoarea1 1545.1875 valoare2 16.625  
+Am gasit doua elemente diferite linia 1025 coloana 15 valoarea1 182.75 valoare2 119.0  
+Am gasit doua elemente diferite linia 1103 coloana 0 valoarea1 1545.1875 valoare2 172.0  
+Am gasit doua elemente diferite linia 1334 coloana 0 valoarea1 1545.1875 valoare2 35.875  
+Am gasit doua elemente diferite linia 1590 coloana 0 valoarea1 1545.1875 valoare2 21.5  
+Am gasit doua elemente diferite linia 1692 coloana 245 valoarea1 86.0 valoare2 178.5  
+Produsul este ok
