@@ -37,7 +37,7 @@ def read_tridiagonal_data(input_data):
                 # citesc diagonala de deasupra diagonalei principale  b
                 b.append(float(value))
 
-    return a, b, c
+    return a, b, c, n, p, q
 
 
 def check_non_null_values(main_diagonal, epsilon):
@@ -50,14 +50,35 @@ def norma(z):
     return math.sqrt(np.sum(np.power(z, 2.0)))
 
 
-def sum_current_iteration_v2(index, a, b, c, x):
+def sum_current_iteration(index, a, b, c, x):
+    ret_sum = 0
+    tri_flag = 0
+    if index < 0:
+        return ret_sum
+
+    for j in range(0, index):
+        if j == index:
+            ret_sum += a[index] * x[j]
+            tri_flag += 1
+        elif index + 1 == j:
+            ret_sum += b[index] * x[j]
+            tri_flag += 1
+        elif index == j+1:
+            ret_sum += c[index] * x[j]
+            tri_flag += 1
+        elif tri_flag == 3:
+            break
+    return ret_sum
+
+
+def sum_current_iteration_v2(index, a, b, c, x, p, q):
     ret_sum = 0
     if index <= 0:
         return ret_sum
         ret_sum += a[index] * x[index]
-        ret_sum += b[index] * x[index-1]
+        ret_sum += b[index] * x[index-p]
         if index < len(a)-1:
-            ret_sum += c[index] * x[index+1]
+            ret_sum += c[index] * x[index+q]
     return ret_sum
 
 
@@ -82,7 +103,7 @@ def sum_last_iteration(index, a, b, c, x):
     return ret_sum
 
 
-def Gauss_Seidel(a, b, c, f):
+def Gauss_Seidel(a, b, c, f, p, q):
     n = len(a)
     xc = [0 for __ in range(n)]
     xp = xc[:]
@@ -94,7 +115,7 @@ def Gauss_Seidel(a, b, c, f):
         xp = xc[:]
         for index in range(len(a)):
             xc[index] = (f[index] - sum_current_iteration_v2(index, a, b,
-                                                             c, xc) - sum_current_iteration_v2(index+1, a, b, c, xp))/a[index]
+                                                             c, xc, p, q) - sum_current_iteration_v2(index+1, a, b, c, xp, p, q))/a[index]
 
         dx = norma([xc[i]-xp[i] for i in range(len(xc))])
         k += 1
@@ -108,11 +129,20 @@ def Gauss_Seidel(a, b, c, f):
 
 if __name__ == "__main__":
     epsilon = 10**-15
-    a, b, c = read_tridiagonal_data("a1.txt")
+    a, b, c, n, p, q = read_tridiagonal_data("a1.txt")
     f = read_free_terms("f1.txt")
     if check_non_null_values(a, epsilon):
         print("The main diagonal has no null values")
-    final, iteratie = Gauss_Seidel(a, b, c, f)
+    final, iteratie = Gauss_Seidel(a, b, c, f, p, q)
     print(f"FInal vector {final}")
     print(f"ITERIATIE{iteratie}")
-    print(f"L")
+    print("\n"*3)
+
+    a, b, c, n, p, q = read_tridiagonal_data("a2.txt")
+    f = read_free_terms("f2.txt")
+    if check_non_null_values(a, epsilon):
+        print("The main diagonal has no null values")
+    final, iteratie = Gauss_Seidel(a, b, c, f, p, q)
+    print(f"FInal vector {final}")
+    print(f"ITERIATIE{iteratie}")
+    print(f"LEn")
