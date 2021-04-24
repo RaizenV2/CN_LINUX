@@ -50,99 +50,132 @@ def norma(z):
     return math.sqrt(np.sum(np.power(z, 2.0)))
 
 
-def sum_current_iteration(index, a, b, c, x):
-    ret_sum = 0
-    tri_flag = 0
-    if index < 0:
-        return ret_sum
-
-    for j in range(0, index):
-        if j == index:
-            ret_sum += a[index] * x[j]
-            tri_flag += 1
-        elif index + 1 == j:
-            ret_sum += b[index] * x[j]
-            tri_flag += 1
-        elif index == j+1:
-            ret_sum += c[index] * x[j]
-            tri_flag += 1
-        elif tri_flag == 3:
-            break
-    return ret_sum
-
-
-def sum_current_iteration_v2(index, a, b, c, x, p, q):
-    ret_sum = 0
-    if index <= 0:
-        return ret_sum
-        ret_sum += a[index] * x[index]
-        ret_sum += b[index] * x[index-p]
-        if index < len(a)-1:
-            ret_sum += c[index] * x[index+q]
-    return ret_sum
-
-
-def sum_last_iteration(index, a, b, c, x):
-    ret_sum = 0
-    n = len(a)
-    b_l = len(b)
-    c_l = len(c)
-    tri_flag = 0
-    for j in range(index, n):
-        if j == index:
-            ret_sum += a[index] * x[j]
-            tri_flag += 1
-        elif index + 1 == j and index <= b_l:
-            ret_sum += b[index] * x[j]
-            tri_flag += 1
-        elif index == j+1 and index <= c_l:
-            ret_sum += c[index] * x[j]
-            tri_flag += 1
-        elif tri_flag == 3:
-            break
-    return ret_sum
-
-
 def Gauss_Seidel(a, b, c, f, p, q):
     n = len(a)
     xc = [0 for __ in range(n)]
-    xp = xc[:]
     k = 0
     kmax = 10000
     dx = 0
     eps = 10 ** -16
+    x_precedent = 0
     while 1:
-        xp = xc[:]
-        for index in range(len(a)):
-            xc[index] = (f[index] - sum_current_iteration_v2(index, a, b,
-                                                             c, xc, p, q) - sum_current_iteration_v2(index+1, a, b, c, xp, p, q))/a[index]
 
-        dx = norma([xc[i]-xp[i] for i in range(len(xc))])
-        k += 1
-        if not(dx >= eps and k <= kmax and dx <= pow(10, 8)):
+        for i in range(len(a)):
+            # xc[index]  = (f[index] - a[i][i-q]*v[i-q] - a[i][i+p]*vp_precedent) x[i+p]
+
+            if i >= q:
+                value1 = c[i-q]*xc[i-q]  # a[i][i-q] elementul de sub diagonala
+            else:
+                value1 = 0
+
+            if i < n-p:
+                # a[i][i+p] elementul deasupra diagonalei principale
+                value2 = b[i] * x_precedent
+            else:
+                value2 = 0
+
+            if i < n:
+                xc[i] = (f[i]-value1 - value2) / a[i]
+            else:
+                xc[i] = (f[i]-c[i-q]*xc[i-q]) / a[i]
+                if i >= q and i+p <= n:
+                    print(
+                        f"x[{i}] = f{i} -c{i-q} * xc[{i-q}] - b[{i}] * x[{i+p}]")
+                    print("\n")
+
+            # print("X ACTUAL", xc[i])
+            # print("X PRECEDENT ", x_precedent)
+
+            norma = math.sqrt(abs(xc[i]-x_precedent))
+            if i < n-p:
+                x_precedent = xc[i+p]
+
+            # print("NORMA", norma, "\n")
+
+        if not (norma >= eps and k < kmax and norma < 10 ** 8):
             break
+
+        k += 1
+
     if dx < eps:
         return (xc, k)
     else:
-        return "Divergenta!!"
+        return("Divergenta")
+
+
+def multipy_tridiagonal_matrix(a, b, c, p, q, n, v):
+    ret_list = []
+
+    for i in range(0, n):
+        res_first = 0
+        for j in range(0, n):
+
+            value1 = 0
+            value2 = 0  # a [i][k]
+
+            if j == i:         # k == i
+                value1 = a[j]  # a[i][k] b[j][j]
+
+            if j > i and j - i == p and i < n-p:  # k = i+p
+                value1 = b[i]  # a[i][i+p] * b[i+p][j]   a
+
+            if i > j and i - j == q and j <= n-1:
+                value1 = c[j]
+
+            value2 = v[j]
+
+            res_first += value1 * value2
+        # print("Pe linia ", i, "-->", res_first)
+        ret_list.append(res_first)
+
+    return ret_list
+
+
+def multipy_tridiagonal_matrix_v2(a, b, c, p, q, n, v):
+    ret_list = []
+    for i in range(0, n):
+        res_val = 0
+        res_val += a[i] * v[i]
+        if i < n-p :
+            res_val += b[i] * v[i+p]  # a[i][i+p]
+        else:
+            res_val += 0
+
+        if i > q-1:
+            res_val += c[i-q] * v[i-q]  # a[i+q]
+        else:
+            res_val += 0
+
+        ret_list.append(res_val)
+
+    return ret_list
+
+
+def main():
+    epsilon = 10**-14
+    for i in range(1, 2):
+        a, b, c, n, p, q = read_tridiagonal_data("a"+str(i)+".txt")
+        f = read_free_terms("f"+str(i)+".txt")
+        if check_non_null_values(a, epsilon):
+            print("The main diagonal has no null values")
+        final, iteratie = Gauss_Seidel(a, b, c, f, p, q)
+        print(f"FInal vector {final}")
+        # print(f"ITERIATIE{iteratie}")
+        x_Gs = multipy_tridiagonal_matrix_v2(a, b, c, p, q, n, final)
+        # print("\n"*3)
+        ceva = np.linalg.norm(np.array(x_Gs) - np.array(f), ord=np.inf)
+        print(ceva)
 
 
 if __name__ == "__main__":
-    epsilon = 10**-15
-    a, b, c, n, p, q = read_tridiagonal_data("a1.txt")
-    f = read_free_terms("f1.txt")
-    if check_non_null_values(a, epsilon):
-        print("The main diagonal has no null values")
-    final, iteratie = Gauss_Seidel(a, b, c, f, p, q)
-    print(f"FInal vector {final}")
-    print(f"ITERIATIE{iteratie}")
-    print("\n"*3)
-
-    a, b, c, n, p, q = read_tridiagonal_data("a2.txt")
-    f = read_free_terms("f2.txt")
-    if check_non_null_values(a, epsilon):
-        print("The main diagonal has no null values")
-    final, iteratie = Gauss_Seidel(a, b, c, f, p, q)
-    print(f"FInal vector {final}")
-    print(f"ITERIATIE{iteratie}")
-    print(f"LEn")
+    # a, b, c, n, p, q = read_tridiagonal_data("test_tridiagonal.txt")
+    # f = read_free_terms("freeterm.txt")
+    # x_Gs = multipy_tridiagonal_matrix_v2(a, b, c, p, q, n, f)
+    # print(f)
+    # print("a= ",a)
+    # print("b= ",b)
+    # print("c= ",c)
+    # print(x_Gs)
+    main()
+    # print(len(Axgs))
+    # print(diferenta_norma)

@@ -1,8 +1,4 @@
 
-
-from copy import deepcopy
-
-
 def matrix_read_up_a(input_data):
     f = open(input_data, "r")
     n = int(f.readline())

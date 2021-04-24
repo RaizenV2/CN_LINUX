@@ -48,7 +48,7 @@ def gui(top):
     M4 = Label(top, text="", font="Georgia 12 bold", fg="white")
     M4.pack()
 
-    top.geometry("800x800")
+    top.geometry("1200x800")
 
 
 top = Tk()
